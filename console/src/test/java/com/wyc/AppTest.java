@@ -1,4 +1,4 @@
-package org.example;
+package com.wyc;
 
 import static org.junit.Assert.assertTrue;
 

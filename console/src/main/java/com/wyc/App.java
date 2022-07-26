@@ -1,4 +1,4 @@
-package org.example;
+package com.wyc;
 
 /**
  * Hello world!
