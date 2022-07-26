@@ -3,7 +3,7 @@ package com.wyc.util;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class NetworkUtil {
+public class UtilNetwork {
     //获取本机ip地址
     public static String getLocalIp() {
         try {

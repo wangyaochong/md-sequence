@@ -1,8 +1,9 @@
 drop table if exists seq_core;
 CREATE TABLE seq_core
 (
-    `id`      bigint NOT NULL AUTO_INCREMENT,
-    `max_seq` bigint NOT NULL,
+    `id`      bigint NOT NULL AUTO_INCREMENT comment 'id',
+    `max_seq` bigint NOT NULL comment '上一次取值的最大值，这次取需要+1开始',
+    `node_id` bigint comment '服务节点id，可能是null，如果是全局递增，则必须不为null',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
@@ -13,10 +14,10 @@ CREATE TABLE seq_core
 drop table if exists seq_info;
 CREATE TABLE seq_info
 (
-    `id`       bigint      NOT NULL AUTO_INCREMENT,
-    `seq_core_id`  bigint,
-    `seq_name` varchar(64) NOT NULL,
-    `seq_type` varchar(16) NOT NULL,
+    `id`          bigint      NOT NULL AUTO_INCREMENT,
+    `seq_core_id` bigint,
+    `seq_name`    varchar(64) NOT NULL,
+    `seq_type`    varchar(16) NOT NULL,
     PRIMARY KEY (`id`),
     unique key `seq_name` (`seq_name`),
     index idx_name (seq_name)
@@ -26,20 +27,6 @@ CREATE TABLE seq_info
   COLLATE = utf8mb4_bin
   ROW_FORMAT = COMPACT COMMENT ='序列信息表，记录序列名称、类型等信息，序列信息创建以后，不允许修改';
 
-drop table if exists node_seq;
-CREATE TABLE node_seq
-(
-    `id`      bigint NOT NULL AUTO_INCREMENT,
-    `seq_core_id`  bigint NOT NULL,
-    `node_id` bigint NOT NULL,
-    PRIMARY KEY (`id`),
-    unique key idx_seq (seq_core_id),
-    index idx_node (node_id)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 0
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_bin
-  ROW_FORMAT = COMPACT COMMENT ='节点序列关系表，全局严格递增下一个序列只有一个节点服务';
 drop table if exists node;
 CREATE TABLE node
 (

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,10 +25,15 @@ public class SeqCore implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty("id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @ApiModelProperty("上一次取值的最大值，这次取需要+1开始")
     private Long maxSeq;
+
+    @ApiModelProperty("服务节点id，可能是null，如果是全局递增，则必须不为null")
+    private Long nodeId;
 
 
 }

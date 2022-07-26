@@ -2,7 +2,7 @@ package com.wyc.util;
 
 import java.util.List;
 
-public class MethodTimeUtil {
+public class UtilMethodTime {
   static ThreadLocal<List<Long>> methodTime = new ThreadLocal<>();
 
   public static void start() {
