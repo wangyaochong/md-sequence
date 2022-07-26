@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--<properties resource="jdbc.properties"/>-->
+    <!--完整的mybatis配置，具体解释可参考官方文档-->
+    <settings>
+        <setting name="returnInstanceForEmptyRow" value="true"/>
+        <!--二级缓存会占用大量的内存，因为会保存很多字符串-->
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <setting name="useColumnLabel" value="true"/>
+        <setting name="useGeneratedKeys" value="true"/>
+        <setting name="autoMappingBehavior" value="FULL"/>
+
+        <!--对于无法映射的字段要抛异常！-->
+        <setting name="autoMappingUnknownColumnBehavior" value="FAILING"/>
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <setting name="defaultStatementTimeout" value="600"/>
+        <setting name="defaultFetchSize" value="5000"/>
+        <setting name="safeRowBoundsEnabled" value="false"/>
+
+        <!--自动将下横线映射到驼峰式命名-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="jdbcTypeForNull" value="OTHER"/>
+        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
+<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
+        <!--                <setting name="logImpl" value="Slf4jImpl"/>-->
+        <setting name="logPrefix" value="sql+++"/>
+    </settings>
+
+    <!--<typeAliases>-->
+    <!--&lt;!&ndash;这两种别名都可以使用，使用type，则是针对单个类，使用package，则默认会将类名映射到完整类名&ndash;&gt;-->
+    <!--<typeAlias alias="User" type="com.example.learnmybatis.entity.User"/>-->
+    <!--<package name="com.example.learnmybatis.entity"/>-->
+    <!--</typeAliases>-->
+
+
+    <!--<typeHandlers>-->
+    <!--&lt;!&ndash;typeHandler需要制定javaType的&ndash;&gt;-->
+    <!--<typeHandler handler="com.example.learnmybatis.typeHandler.SexTypeHandler" javaType="com.example.learnmybatis.enums.EnumSex"/>-->
+    <!--&lt;!&ndash;扫描xxx包下面所有的typeHandler&ndash;&gt;-->
+    <!--&lt;!&ndash;<package name="typeHandler"/>&ndash;&gt;-->
+    <!--</typeHandlers>-->
+
+    <!--<objectFactory type="com.example.learnmybatis.factory.MyObjectFactory">-->
+    <!--<property name="specialName" value="mySpecialName"/>-->
+    <!--</objectFactory>-->
+
+    <!--&lt;!&ndash;&lt;!&ndash;这里的 DB_VENDOR 会通过 DatabaseMetaData#getDatabaseProductName()，这是底层jdbc的实现，可以看@TestDataBaseMetaData&ndash;&gt;-->
+    <!--<databaseIdProvider type="DB_VENDOR">-->
+    <!--<property name="MySQL" value="mysql"/>-->
+    <!--<property name="Oracle" value="oracle"/>-->
+    <!--</databaseIdProvider>-->
+    <!---->
+    <!--<environments default="development">-->
+    <!--<environment id="development">-->
+    <!--<transactionManager type="JDBC"/>-->
+    <!--<dataSource type="POOLED">-->
+    <!--<property name="driver" value="${jdbc.driverClass}"/>-->
+    <!--<property name="url" value="${jdbc.url}"/>-->
+    <!--<property name="username" value="${jdbc.userName}"/>-->
+    <!--<property name="password" value="${jdbc.password}"/>-->
+    <!--</dataSource>-->
+    <!--</environment>-->
+    <!--</environments>-->
+
+    <!--<plugins>-->
+    <!-- com.github.pagehelper为PageHelper类所在包名 -->
+    <!--<plugin interceptor="com.github.pagehelper.PageInterceptor">-->
+    <!--&lt;!&ndash; 使用下面的方式配置参数，后面会有所有的参数介绍 &ndash;&gt;-->
+    <!--<property name="param1" value="value1"/>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+
+
+</configuration>
