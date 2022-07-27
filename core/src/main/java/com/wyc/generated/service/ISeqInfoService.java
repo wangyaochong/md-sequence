@@ -16,4 +16,6 @@ import java.util.List;
 public interface ISeqInfoService extends IService<SeqInfo> {
 
     List<SeqInfo> getBySeqNameList(List<String> seqName);
+
+    SeqInfo getByName(String seqName);
 }

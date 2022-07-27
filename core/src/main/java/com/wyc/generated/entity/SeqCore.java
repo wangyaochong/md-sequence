@@ -15,7 +15,7 @@ import lombok.Setter;
  * </p>
  *
  * @author wyc
- * @since 2022-07-26
+ * @since 2022-07-27
  */
 @Getter
 @Setter
@@ -30,7 +30,7 @@ public class SeqCore implements Serializable {
     private Long id;
 
     @ApiModelProperty("上一次取值的最大值，这次取需要+1开始")
-    private Long maxSeq;
+    private Long lastMax;
 
     @ApiModelProperty("服务节点id，可能是null，如果是全局递增，则必须不为null")
     private Long nodeId;

@@ -21,6 +21,10 @@ import java.util.List;
 public class SeqInfoServiceImpl extends ServiceImpl<SeqInfoMapper, SeqInfo> implements ISeqInfoService {
 
     @Override public List<SeqInfo> getBySeqNameList(List<String> seqName) {
-        return list(new LambdaQueryWrapper<SeqInfo>().in(SeqInfo::getSeqName, seqName));
+        return list(new LambdaQueryWrapper<SeqInfo>().in(SeqInfo::getName, seqName));
+    }
+
+    @Override public SeqInfo getByName(String seqName) {
+        return getOne(new LambdaQueryWrapper<SeqInfo>().eq(SeqInfo::getName, seqName));
     }
 }

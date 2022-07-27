@@ -7,7 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeqSegment {
-    Long start;
-    Long end;
+public class FetchTask implements Runnable {
+    String seqName;
+    Runnable task;
+
+
+    @Override
+    public void run() {
+        task.run();
+    }
 }

@@ -2,6 +2,7 @@ package com.wyc.generated.mapper;
 
 import com.wyc.generated.entity.SeqCore;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SeqCoreMapper extends BaseMapper<SeqCore> {
 
+    @Select("select * from seq_core where id=#{id} for update")
+    SeqCore getByIdForUpdate(Long id);
 }

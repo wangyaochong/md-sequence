@@ -1,9 +1,9 @@
 drop table if exists seq_core;
 CREATE TABLE seq_core
 (
-    `id`      bigint NOT NULL AUTO_INCREMENT comment 'id',
-    `max_seq` bigint NOT NULL comment '上一次取值的最大值，这次取需要+1开始',
-    `node_id` bigint comment '服务节点id，可能是null，如果是全局递增，则必须不为null',
+    `id`       bigint           NOT NULL AUTO_INCREMENT comment 'id',
+    `last_max` bigint default 1 NOT NULL comment '上一次取值的最大值，这次取需要+1开始',
+    `node_id`  bigint comment '服务节点id，可能是null，如果是全局递增，则必须不为null',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
@@ -14,13 +14,13 @@ CREATE TABLE seq_core
 drop table if exists seq_info;
 CREATE TABLE seq_info
 (
-    `id`          bigint      NOT NULL AUTO_INCREMENT,
-    `seq_core_id` bigint,
-    `seq_name`    varchar(64) NOT NULL,
-    `seq_type`    varchar(16) NOT NULL,
+    `id`         bigint      NOT NULL AUTO_INCREMENT,
+    `core_id`    bigint,
+    `name`       varchar(64) NOT NULL,
+    `cache_size` int         not null,
+    `type`       varchar(64) NOT NULL,
     PRIMARY KEY (`id`),
-    unique key `seq_name` (`seq_name`),
-    index idx_name (seq_name)
+    unique key `name` (`name`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4
