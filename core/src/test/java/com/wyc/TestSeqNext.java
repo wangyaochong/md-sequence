@@ -62,7 +62,7 @@ public class TestSeqNext {
         for (int i = 0; i < taskCount; i++) {
             executorService.execute(() -> {
                 while (System.currentTimeMillis() - start < 100) {
-                    Result<PlainSeqSegmentResult> nextResult = seqManager.next("seq", 9999);
+                    Result<PlainSeqSegmentResult> nextResult = seqManager.next("seq", 12345);
                     //add from result.data.start to result.data.end to list
                     segmentList.add(nextResult.getData());
                     for (PlainSeqSegment plainSeqSegment : nextResult.getData().getSegmentList()) {
@@ -78,6 +78,6 @@ public class TestSeqNext {
         number.sort((o1, o2) -> (int) (o1 - o2));
 //        segmentList.sort((o1, o2) -> (int) (o1.getStart() - o2.getStart()));
         //display number
-        System.out.println("end");
+            System.out.println("end");
     }
 }

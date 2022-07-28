@@ -75,6 +75,10 @@ public class SeqManager implements InitializingBean {
         TransactionStatus status = transactionManager.getTransaction(def);
         try {
             SeqCore seqCore = seqCoreMapper.getByIdForUpdate(seqInfoMap.get(seqName).getCoreId());
+            SeqBuffer seqBuffer = seqBufferMap.get(seqName);
+            if (seqCore.getLastMax() < seqBuffer.getMax()) {//可能等于，但是不可能小于
+                throw new RuntimeException("lastMax is less than max");
+            }
             long start = seqCore.getLastMax();
             seqCore.setLastMax(seqCore.getLastMax() + count);
             seqCoreService.updateById(seqCore);
@@ -141,7 +145,9 @@ public class SeqManager implements InitializingBean {
                 if (!needScan) {//如果都是满的，就等待
                     try {
                         scanLock.lock();
+                        log.info("scanLock await");
                         scanCondition.await();
+                        log.info("scanLock awake");
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     } finally {
@@ -187,8 +193,9 @@ public class SeqManager implements InitializingBean {
                 fetchService.execute(() -> fetchTask.accept(seqName, Math.max(count, cacheSize)));//如果count大于cacheSize，则拉取count数，比如10万个
             }
             while (seqBuffer.getTotal() < count) {
-                log.info("seqBuffer.getTotal().get()={}", seqBuffer.getTotal());
+                log.info("seqBuffer.getTotal().get()={} await", seqBuffer.getTotal());
                 seqNextConditionMap.get(seqName).await();
+                log.info("seqBuffer.getTotal().get()={} awake", seqBuffer.getTotal());
             }
             return Result.success(seqBuffer.getPlainSequenceResult(count));
         } catch (Exception e) {
