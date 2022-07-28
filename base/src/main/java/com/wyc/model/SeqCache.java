@@ -42,10 +42,8 @@ public class SeqCache {
             if (result.getTotal() + firstNode.getCount() <= count) {
                 queue.remove(0);
                 result.getSegmentList().add(firstNode.toPlainSeqSegment());
-                log.info("total count={}", getTotal());
             } else {
                 result.getSegmentList().add(firstNode.getPlainSeqSegment(count - result.getTotal()));
-                log.info("total count={}", getTotal());
             }
         }
         return result;

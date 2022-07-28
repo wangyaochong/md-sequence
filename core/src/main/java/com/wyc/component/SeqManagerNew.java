@@ -2,18 +2,17 @@ package com.wyc.component;
 
 import com.wyc.generated.entity.SeqInfo;
 import com.wyc.generated.mapper.SeqCoreMapper;
+import com.wyc.generated.service.INodeService;
 import com.wyc.generated.service.ISeqCoreService;
 import com.wyc.generated.service.ISeqInfoService;
 import com.wyc.model.PlainSeqSegmentResult;
 import com.wyc.model.Result;
-import com.wyc.sequence.MultiNodeSequence;
-import com.wyc.sequence.base.Sequence;
+import com.wyc.sequence.Sequence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.print.attribute.standard.Severity;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -35,8 +34,8 @@ public class SeqManagerNew {
         }
     });
     @Autowired ISeqInfoService seqInfoService;
-    @Autowired ISeqCoreService seqCoreService;
     @Autowired SeqCoreMapper seqCoreMapper;
+    @Autowired INodeService nodeService;
     @Autowired PlatformTransactionManager transactionManager;
     Map<String, Sequence> servingSequenceMap = new ConcurrentHashMap<>();
     ReentrantLock startServerLock = new ReentrantLock();
@@ -44,11 +43,10 @@ public class SeqManagerNew {
     public boolean startServe(String seqName) {
         startServerLock.lock();
         try {
-            //todo 修改成通过类型反射
             SeqInfo seqInfo = seqInfoService.getByName(seqName);
-            MultiNodeSequence multiNodeSequence = new MultiNodeSequence();
-            multiNodeSequence.init(seqName, seqInfoService, seqCoreService, seqCoreMapper, transactionManager, fetchService);
-            servingSequenceMap.put(seqName, multiNodeSequence);
+            Sequence sequence = new Sequence();
+            sequence.init(seqName, seqInfoService, nodeService, seqCoreMapper, transactionManager, fetchService);
+            servingSequenceMap.put(seqName, sequence);
             return true;
         } catch (Exception e) {
             log.error("start server error", e);
@@ -67,6 +65,6 @@ public class SeqManagerNew {
             }
         }
         Sequence sequence = servingSequenceMap.get(seqName);
-        return sequence.next(count);
+        return Result.success(sequence.next(count));
     }
 }

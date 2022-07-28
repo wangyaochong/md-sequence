@@ -1,6 +1,5 @@
 package com.wyc;
 
-import com.wyc.component.SeqManager;
 import com.wyc.component.SeqManagerNew;
 import com.wyc.model.PlainSeqSegment;
 import com.wyc.model.PlainSeqSegmentResult;
@@ -18,6 +17,7 @@ import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest(classes = App.class)
 @RunWith(SpringRunner.class)
@@ -62,26 +62,30 @@ public class TestSeqManager {
         int taskCount = 10;
         CountDownLatch latch = new CountDownLatch(taskCount);
         List<Long> number = new Vector<>();
-        List<PlainSeqSegmentResult> segmentList = new Vector<>();
+//        List<PlainSeqSegmentResult> segmentList = new Vector<>();
+        AtomicInteger count = new AtomicInteger(0);
+        int getCount = 100;
         for (int i = 0; i < taskCount; i++) {
             executorService.execute(() -> {
-                while (System.currentTimeMillis() - start < 100) {
-                    Result<PlainSeqSegmentResult> nextResult = seqManager.next("seq", 12345);
+                while (System.currentTimeMillis() - start < 10000) {
+                    Result<PlainSeqSegmentResult> nextResult = seqManager.next("seq", getCount);
                     //add from result.data.start to result.data.end to list
-                    segmentList.add(nextResult.getData());
-                    for (PlainSeqSegment plainSeqSegment : nextResult.getData().getSegmentList()) {
-                        for (Long j = plainSeqSegment.getStart(); j < plainSeqSegment.getEnd(); j++) {
-                            number.add(j);
-                        }
-                    }
+//                    segmentList.add(nextResult.getData());
+                    count.getAndAdd(getCount);
+//                    for (PlainSeqSegment plainSeqSegment : nextResult.getData().getSegmentList()) {
+//                        for (Long j = plainSeqSegment.getStart(); j < plainSeqSegment.getEnd(); j++) {
+//                            number.add(j);
+//                        }
+//                    }
                 }
                 latch.countDown();
             });
         }
         latch.await();
-        number.sort((o1, o2) -> (int) (o1 - o2));
+//        number.sort((o1, o2) -> (int) (o1 - o2));
         System.out.println(number.size());
-        System.out.println(segmentList.size());
+//        System.out.println(segmentList.size());
+        System.out.println("count:" + count.get());
 //        segmentList.sort((o1, o2) -> (int) (o1.getStart() - o2.getStart()));
         //display number
         System.out.println("end");
