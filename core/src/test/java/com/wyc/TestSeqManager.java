@@ -1,5 +1,7 @@
 package com.wyc;
+
 import com.wyc.component.SeqManager;
+import com.wyc.component.SeqManagerNew;
 import com.wyc.model.PlainSeqSegment;
 import com.wyc.model.PlainSeqSegmentResult;
 import com.wyc.model.Result;
@@ -9,16 +11,18 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 @SpringBootTest(classes = App.class)
 @RunWith(SpringRunner.class)
-public class TestSeqNext {
-    @Autowired SeqManager seqManager;
+public class TestSeqManager {
+    @Autowired SeqManagerNew seqManager;
 
     @Test
     public void testStartServe() throws InterruptedException {
@@ -76,8 +80,14 @@ public class TestSeqNext {
         }
         latch.await();
         number.sort((o1, o2) -> (int) (o1 - o2));
+        System.out.println(number.size());
+        System.out.println(segmentList.size());
 //        segmentList.sort((o1, o2) -> (int) (o1.getStart() - o2.getStart()));
         //display number
-            System.out.println("end");
+        System.out.println("end");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Long.MAX_VALUE);
     }
 }
