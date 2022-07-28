@@ -48,7 +48,7 @@ public class Sequence {
     protected SeqInfo seqInfo;
     protected Node node;
 
-    //正在拉取的数量，防止过量拉取
+    //正在拉取的数量，因为拉取是异步的，防止过量拉取
     AtomicInteger fetchingCount = new AtomicInteger(0);
 
     public void init(String seqName,
