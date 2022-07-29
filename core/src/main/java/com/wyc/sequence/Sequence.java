@@ -110,7 +110,7 @@ public class Sequence {
                 log.info("seqCache.getTotal() < count await,count={}", count);
                 //todo 检查超时是否是因为节点切换导致，如果是，则需要返回错误了并且不能返回Segment了
                 waitingFetchLock.lock();
-                boolean await = waitingFetchCondition.await(5L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
+                boolean await = waitingFetchCondition.await(3L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
                 waitingFetchLock.unlock();
                 log.info("seqCache.getTotal() < count awake,count={}", count);
                 if (!await) {
@@ -165,17 +165,18 @@ public class Sequence {
             TransactionStatus status = transactionManager.getTransaction(def);
             try {
                 SeqCore seqCore = seqCoreMapper.getByIdForUpdate(seqInfo.getCoreId());
-                //如果OneNodeSequence没有设置节点，则可以提供服务，则需要检查是否是第一个节点
                 if (seqCore.getNodeId() == null) {
                     seqCore.setNodeId(node.getId());
                     seqCoreMapper.updateById(seqCore);
                 }
-                transactionManager.commit(status);
                 if (!node.getId().equals(seqCore.getNodeId())) {
                     throw new OneNodeSequenceServingByOtherException(String.format("seqName=%s", seqInfo.getName()));
                 }
+                //如果OneNodeSequence没有设置节点，则可以提供服务，则需要检查是否是第一个节点
+                transactionManager.commit(status);
             } catch (Exception e) {
                 transactionManager.rollback(status);
+                throw e;
             }
         }
     }
