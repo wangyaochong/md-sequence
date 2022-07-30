@@ -7,13 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FetchTask implements Runnable {
-    String seqName;
-    Runnable task;
-
-
-    @Override
-    public void run() {
-        task.run();
-    }
+public class SeqNextRequest {
+    String name;
+    Integer count;
 }

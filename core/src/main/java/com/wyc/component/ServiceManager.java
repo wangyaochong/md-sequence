@@ -22,8 +22,6 @@ import org.springframework.stereotype.Component;
 
 //    @Autowired SeqManager seqManager;
 
-    @Autowired InstanceComponent instanceComponent;
-
     public Result<Object> startServe(String seqName) {//开始服务
         SeqInfo seqInfo = seqInfoService.getByName(seqName);
         SeqCore seqCore = seqCoreService.getById(seqInfo.getCoreId());
@@ -64,13 +62,13 @@ import org.springframework.stereotype.Component;
     }
 
     private Node getOrInsertNode() {
-        Node node = nodeService.getByIpAndPort(instanceComponent.getIp(), instanceComponent.getPort());
+        Node node = nodeService.getByIpAndPort(InstanceComponent.getIp(), InstanceComponent.getPort());
         if (node == null) {
             node = new Node();
             node.setVersion(0L);
         }
-        if (node.getIp() == null) node.setIp(instanceComponent.getIp());
-        if (node.getPort() == null) node.setPort(instanceComponent.getPort());
+        if (node.getIp() == null) node.setIp(InstanceComponent.getIp());
+        if (node.getPort() == null) node.setPort(InstanceComponent.getPort());
         node.setVersion(node.getVersion() + 1);//node
         node.setUpdateTime(null);
         nodeService.saveOrUpdate(node);

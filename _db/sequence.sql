@@ -38,9 +38,18 @@ CREATE TABLE node
     `version`     bigint      NOT NULL DEFAULT 0 COMMENT '更新版本号',
     `update_time` datetime    NOT NULL DEFAULT now() on update now() COMMENT '更新时间，只有version会更新',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `ip_port` (`ip`, `port`)
+    UNIQUE KEY `ip_port` (`ip`, `port`),
+    index idx_ut (`update_time`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin
   ROW_FORMAT = COMPACT COMMENT ='服务节点表';
+
+drop table if exists db_lock;
+CREATE TABLE db_lock (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lock_key varchar(255) UNIQUE,
+    token varchar(255),
+    expireAt TIMESTAMP
+);

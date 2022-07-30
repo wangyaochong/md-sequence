@@ -23,6 +23,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.alturkovic.distributed-lock</groupId>
+            <artifactId>distributed-lock-jdbc</artifactId>
+            <version>1.4.1</version>
+        </dependency>
         <!--        springboot-starter-test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
