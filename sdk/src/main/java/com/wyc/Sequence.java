@@ -50,7 +50,7 @@ public class Sequence {
         }
         //如果序列缓存小于服务端缓存的一半，则需要拉取缓存
         //需要加上正在拉取的缓存数量，防止过量拉取
-        return seqCache.getTotal() - count + fetchingCount.get() < clientCacheSize / 2;
+        return seqCache.getTotal() - count + fetchingCount.get() < clientCacheSize;
     }
 
     Consumer<Integer> fetchTask() {
@@ -94,6 +94,7 @@ public class Sequence {
             if (this.usingAddr != null) {
                 String addr = this.usingAddr;//先从指定节点获取
                 SeqNextResponse seqNextResponse = postForSeqSegment(addr, count);
+                //       log.info("getSegmentFromServer, seqName={}, count={}, addr={}, seqNextResponse={}", seqName, count, addr, UtilJson.toJson(seqNextResponse));
                 if (EnumSeqNextResponseBodyType.Segment.name().equals(seqNextResponse.getBodyType())) {
                     this.usingAddr = addr;
                     return getOperatingSeqSegments(addr, seqNextResponse);
@@ -124,6 +125,8 @@ public class Sequence {
             String addr = provider.provide();
             try {
                 SeqNextResponse seqNextResponse = postForSeqSegment(addr, count);
+                //      log.info("getSegmentFromServer, seqName={}, count={}, addr={}, seqNextResponse={}", seqName, count, addr, UtilJson.toJson(seqNextResponse));
+
                 if (EnumSeqNextResponseBodyType.Segment.name().equals(seqNextResponse.getBodyType())) {
                     this.usingAddr = addr;
                     return getOperatingSeqSegments(addr, seqNextResponse);
@@ -184,7 +187,7 @@ public class Sequence {
                 waitingFetchLock.lock();
                 boolean await = waitingFetchCondition.await(3L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
                 waitingFetchLock.unlock();
-                log.info("seqCache.getTotal() < count awake,count={}", count);
+                log.info("seqCache.getTotal() < count awake,count={},seqCacheCount={}", count, seqCache.getTotal());
                 if (waitingCount >= 3) {
                     throw new RuntimeException("获取序列失败");
                 }

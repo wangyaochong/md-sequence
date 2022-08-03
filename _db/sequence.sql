@@ -17,8 +17,8 @@ CREATE TABLE seq_info
     `id`                bigint      NOT NULL AUTO_INCREMENT,
     `core_id`           bigint,
     `name`              varchar(64) NOT NULL,
-    `server_cache_size` int         not null default 10000000 comment '服务端缓存',
-    `client_cache_size` int         not null default 10000 comment '客户端缓存',
+    `server_cache_size` int         not null default 10000000 comment '服务端缓存，大于等于2，建议100万',
+    `client_cache_size` int         not null default 10000 comment '客户端缓存，大于等于1，建议1万',
     `type`              varchar(64) NOT NULL,
     PRIMARY KEY (`id`),
     unique key `name` (`name`)
@@ -47,9 +47,10 @@ CREATE TABLE node
   ROW_FORMAT = COMPACT COMMENT ='服务节点表';
 
 drop table if exists db_lock;
-CREATE TABLE db_lock (
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE db_lock
+(
+    id       int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     lock_key varchar(255) UNIQUE,
-    token varchar(255),
+    token    varchar(255),
     expireAt TIMESTAMP
 );

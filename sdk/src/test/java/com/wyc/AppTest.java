@@ -32,10 +32,12 @@ public class AppTest {
     @Test
     public void test() throws InterruptedException {
         List<SeqClient> seqClientList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            seqClientList.add(new SeqClient(Arrays.asList("127.0.0.1:8080", "127.0.0.1:8081")));
+//        int threadCount = Runtime.getRuntime().availableProcessors();
+        int threadCount = 10;
+        for (int i = 0; i < threadCount; i++) {
+            seqClientList.add(new SeqClient(Arrays.asList("127.0.0.1:8080", "127.0.0.1:8081","127.0.0.1:8082")));
         }
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         AtomicInteger count = new AtomicInteger();
         CountDownLatch countDownLatch = new CountDownLatch(seqClientList.size());
         for (int i = 0; i < seqClientList.size(); i++) {
