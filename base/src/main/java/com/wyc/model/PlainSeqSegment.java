@@ -1,5 +1,6 @@
 package com.wyc.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class PlainSeqSegment {
     Long start;
     Long end;
 
+    @JsonIgnore
     public Integer getCount() {
         if (start > end) {
             throw new RuntimeException("end must bigger than or equal start, start:" + start + ",end:" + end);
@@ -21,6 +23,7 @@ public class PlainSeqSegment {
         return Math.toIntExact(end - start);
     }
 
+    @JsonIgnore
     public List<Long> getSequenceList() {
         List<Long> result = new ArrayList<>();
         for (long i = start; i < end; i++) {

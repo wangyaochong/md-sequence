@@ -3,6 +3,8 @@ package com.wyc.generated.service;
 import com.wyc.generated.entity.Node;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务节点表 服务类
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface INodeService extends IService<Node> {
     Node getByIpAndPort(String ip, Integer port);
+
 }

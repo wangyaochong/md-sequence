@@ -1,5 +1,13 @@
 package com.wyc.model;
 
-public class SeqCheckAliveRequest {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SeqCheckAliveRequest {
+    String targetIp;
+    Integer targetPort;
 }

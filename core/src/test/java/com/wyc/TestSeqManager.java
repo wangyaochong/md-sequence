@@ -40,9 +40,8 @@ public class TestSeqManager {
     public void testStartServeAndNextOnce() {
         boolean seq = seqManager.startServe("seq");
         int count = 999;
-        Result<PlainSeqSegmentResult> seq1 = seqManager.next("seq", count);
-        System.out.println(UtilJson.toJson(seq1));
-        List<PlainSeqSegment> segmentList = seq1.getData().getSegmentList();
+        PlainSeqSegmentResult seq2 = seqManager.next("seq", count);
+        List<PlainSeqSegment> segmentList = seq2.getSegmentList();
         List<Long> result = new ArrayList<>();
         for (int i = 0; i < segmentList.size(); i++) {
             for (long j = segmentList.get(i).getStart(); j < segmentList.get(i).getEnd(); j++) {
@@ -68,7 +67,7 @@ public class TestSeqManager {
         for (int i = 0; i < taskCount; i++) {
             executorService.execute(() -> {
                 while (System.currentTimeMillis() - start < 10000) {
-                    Result<PlainSeqSegmentResult> nextResult = seqManager.next("seq", getCount);
+                    PlainSeqSegmentResult seq = seqManager.next("seq", getCount);
                     //add from result.data.start to result.data.end to list
 //                    segmentList.add(nextResult.getData());
                     count.getAndAdd(getCount);

@@ -1,38 +1,40 @@
 package com.wyc.component;
 
-import com.wyc.generated.entity.SeqInfo;
 import com.wyc.generated.mapper.SeqCoreMapper;
 import com.wyc.generated.service.INodeService;
-import com.wyc.generated.service.ISeqCoreService;
 import com.wyc.generated.service.ISeqInfoService;
 import com.wyc.model.PlainSeqSegmentResult;
-import com.wyc.model.Result;
 import com.wyc.sequence.Sequence;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 @Slf4j
-public class SeqManagerNew {
+public class SeqManagerNew implements InitializingBean {
     static final int processorCount = Runtime.getRuntime().availableProcessors();
     ExecutorService fetchService = Executors.newFixedThreadPool(processorCount, new ThreadFactory() {
         AtomicLong count = new AtomicLong(0);
 
-        @Override
-        public Thread newThread(Runnable r) {
+        @Override public Thread newThread(Runnable r) {
             return new Thread(r, "fetchService-" + count.incrementAndGet());
         }
     });
+    ScheduledExecutorService clearService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+        AtomicLong count = new AtomicLong(0);
+
+        @Override public Thread newThread(Runnable r) {
+            return new Thread(r, "clearService-" + count.incrementAndGet());
+        }
+    });
+
     @Autowired ISeqInfoService seqInfoService;
     @Autowired SeqCoreMapper seqCoreMapper;
     @Autowired INodeService nodeService;
@@ -43,28 +45,32 @@ public class SeqManagerNew {
     public boolean startServe(String seqName) {
         startServerLock.lock();
         try {
-            SeqInfo seqInfo = seqInfoService.getByName(seqName);
             Sequence sequence = new Sequence();
             sequence.init(seqName, seqInfoService, nodeService, seqCoreMapper, transactionManager, fetchService);
             servingSequenceMap.put(seqName, sequence);
             return true;
         } catch (Exception e) {
-            log.error("start server error", e);
-            return false;
+            throw e;
         } finally {
             startServerLock.unlock();
         }
     }
 
 
-    public Result<PlainSeqSegmentResult> next(String seqName, Integer count) {
+    public PlainSeqSegmentResult next(String seqName, Integer count) {
         if (!servingSequenceMap.containsKey(seqName)) {
             boolean b = startServe(seqName);
             if (!b) {
-                return Result.error("start server error");
+                throw new RuntimeException("start server error");
             }
         }
         Sequence sequence = servingSequenceMap.get(seqName);
-        return Result.success(sequence.next(count));
+        return sequence.next(count);
+    }
+
+    @Override public void afterPropertiesSet() throws Exception {
+//        clearService.scheduleWithFixedDelay(() -> {
+//            servingSequenceMap.clear();
+//        }, 0, 1, TimeUnit.HOURS);//一个小时执行一次清除缓存的工作，可以确保清除异常状态的缓存
     }
 }

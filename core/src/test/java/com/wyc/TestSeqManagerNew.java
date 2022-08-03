@@ -18,7 +18,7 @@ public class TestSeqManagerNew {
 
     @Test
     public void test(){
-        Result<PlainSeqSegmentResult> seq = seqManagerNew.next("seq", 100);
+        PlainSeqSegmentResult seq = seqManagerNew.next("seq", 100);
         System.out.println(UtilJson.toJson(seq));
     }
 }

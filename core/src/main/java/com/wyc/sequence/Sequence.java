@@ -35,15 +35,15 @@ public class Sequence {
     protected SeqCache seqCache = new SeqCache();
 
     //同一个时刻，只有一个线程能seqCache
-    protected ReentrantLock updateSeqCacheLock = new ReentrantLock();
+    protected ReentrantLock updateSeqCacheLock = new ReentrantLock(true);
 
     //查询同一个序列，不一定是顺序执行的，主要是需要用到nextCondition用于通知
-    protected ReentrantLock waitingFetchLock = new ReentrantLock();
+    protected ReentrantLock waitingFetchLock = new ReentrantLock(true);
     protected Condition waitingFetchCondition = waitingFetchLock.newCondition();
     //防止并发查完数据库后，修改end值的时候，先后顺序错乱
     protected ExecutorService fetchService;
 
-    protected ReentrantLock nextLock = new ReentrantLock();
+    protected ReentrantLock nextLock = new ReentrantLock(true);
 
     protected SeqInfo seqInfo;
     protected Node node;
@@ -98,8 +98,8 @@ public class Sequence {
 
     public PlainSeqSegmentResult next(Integer count) {
         try {
-            checkCanServeSequence();
             nextLock.lock();
+            checkCanServeSequence();
             if (needFetch(count)) {//判断是否需要提前拉取
                 //如果需要拉取的大于总数，则提交一个拉取任务该数量的任务
                 int fetchCount = Math.max(count, seqInfo.getServerCacheSize());
@@ -108,7 +108,6 @@ public class Sequence {
             }
             while (seqCache.getTotal() < count) {
                 log.info("seqCache.getTotal() < count await,count={}", count);
-                //todo 检查超时是否是因为节点切换导致，如果是，则需要返回错误了并且不能返回Segment了
                 waitingFetchLock.lock();
                 boolean await = waitingFetchCondition.await(3L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
                 waitingFetchLock.unlock();
@@ -118,7 +117,9 @@ public class Sequence {
                     checkCanServeSequence();
                 }
             }
-            return seqCache.getPlainSequenceResult(count);
+            PlainSeqSegmentResult plainSequenceResult = seqCache.getPlainSequenceResult(count);
+            plainSequenceResult.setClientCacheSize(seqInfo.getClientCacheSize());
+            return plainSequenceResult;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

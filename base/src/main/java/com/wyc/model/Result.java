@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Result<T> {
-    int errorCode;
-    String message;
+    int errCode;
+    String msg;
     boolean success;
     T data;
 
     public static <T> Result<T> error(String errorMessage) {
-        return new Result<>(EnumErrorCode.COMMON_ERROR, errorMessage, false, null);
+        return new Result<>(EnumErrorCode.CommonError, errorMessage, false, null);
     }
 
     public static <T> Result<T> error(int errorCode, String errorMessage) {

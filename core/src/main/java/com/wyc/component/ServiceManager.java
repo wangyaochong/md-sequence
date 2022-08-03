@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component;
 //    }
 
     //注册服务
-    @Scheduled(fixedDelay = 500) public void heartbeat() {
+    @Scheduled(fixedDelay = 5000) public void heartbeat() {
         //heartbeat是其他节点用于选择活跃节点以及用于其他节点剔除服务的确认信息
         //执行heartbeat失败的自身节点并不会主动剔除服务
         UtilMethodTime.start();
