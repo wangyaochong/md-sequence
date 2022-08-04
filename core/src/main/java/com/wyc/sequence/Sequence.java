@@ -107,11 +107,11 @@ public class Sequence {
                 fetchService.execute(() -> fetchTask().accept(fetchCount));//如果count大于cacheSize，则拉取count数，比如10万个
             }
             while (seqCache.getTotal() < count) {
-                log.info("seqCache.getTotal() < count await,count={}", count);
+                //log.info("seqCache.getTotal() < count await,count={}", count);
                 waitingFetchLock.lock();
                 boolean await = waitingFetchCondition.await(3L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
                 waitingFetchLock.unlock();
-                log.info("seqCache.getTotal() < count awake,count={}", count);
+                //log.info("seqCache.getTotal() < count awake,count={}", count);
                 if (!await) {
                     //如果超时没有收到缓存拉取完成的通知，则说明需要检查节点是否切换
                     checkCanServeSequence();

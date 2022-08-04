@@ -38,6 +38,10 @@
             <artifactId>md-sequence-base</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+           <dependency>
+            <groupId>com.wyc</groupId>
+            <artifactId>md-sequence-sdk</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

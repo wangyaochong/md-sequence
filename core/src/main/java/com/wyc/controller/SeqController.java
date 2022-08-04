@@ -3,7 +3,7 @@ package com.wyc.controller;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.alturkovic.lock.Lock;
 import com.wyc.component.InstanceComponent;
-import com.wyc.component.SeqManagerNew;
+import com.wyc.component.SeqManager;
 import com.wyc.config.DbLockConfig;
 import com.wyc.enums.EnumErrorCode;
 import com.wyc.enums.EnumSeqNextResponseBodyType;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SeqController {
 
-    @Autowired SeqManagerNew seqManager;
+    @Autowired SeqManager seqManager;
     @Autowired INodeService nodeService;
     @Autowired ISeqCoreService seqCoreService;
     @Autowired ISeqInfoService seqInfoService;

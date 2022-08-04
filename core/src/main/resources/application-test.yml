@@ -1,0 +1,8 @@
+server:
+  port: 8080
+  ip: 127.0.0.1
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sequence_test
+    username: root

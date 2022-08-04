@@ -15,7 +15,6 @@ public class SeqNextResponse {
     Boolean success;
     Object body;
 
-    @NonNull
     @NotNull
     String bodyType;
     //有两种类型，一种是返回序列段，另一种是返回目标机器的ip和port

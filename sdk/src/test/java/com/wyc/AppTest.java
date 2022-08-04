@@ -28,6 +28,8 @@ public class AppTest {
     public void testOne(){
         SeqClient seqClient=new SeqClient(Arrays.asList("127.0.0.1:8080", "127.0.0.1:8081"));
         Long seq = seqClient.next("seq");
+        System.out.println(seq);
+
     }
     @Test
     public void test() throws InterruptedException {

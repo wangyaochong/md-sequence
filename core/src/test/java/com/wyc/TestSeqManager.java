@@ -1,10 +1,8 @@
 package com.wyc;
 
-import com.wyc.component.SeqManagerNew;
+import com.wyc.component.SeqManager;
 import com.wyc.model.PlainSeqSegment;
 import com.wyc.model.PlainSeqSegmentResult;
-import com.wyc.model.Result;
-import com.wyc.util.UtilJson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SpringBootTest(classes = App.class)
 @RunWith(SpringRunner.class)
 public class TestSeqManager {
-    @Autowired SeqManagerNew seqManager;
+    @Autowired SeqManager seqManager;
 
     @Test
     public void testStartServe() throws InterruptedException {

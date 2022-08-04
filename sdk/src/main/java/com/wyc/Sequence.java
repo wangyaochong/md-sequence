@@ -59,12 +59,12 @@ public class Sequence {
             updateSeqCacheLock.lock();
             try {
                 // todo 这个锁可能可以去掉，因为数据库操作不可能比内存操作还要快的
-                log.info("fetchTask start, seqName={}, count={}, get lock", seqName, count);
+                //log.info("fetchTask start, seqName={}, count={}, get lock", seqName, count);
                 List<OperatingSeqSegment> segmentFromServer = getSegmentFromServer(count, 0);
                 for (OperatingSeqSegment operatingSeqSegment : segmentFromServer) {
                     seqCache.addSegment(operatingSeqSegment);
                 }
-                log.info("fetchTask end, seqName={}, count={}", seqName, count);
+                //log.info("fetchTask end, seqName={}, count={}", seqName, count);
                 waitingFetchLock.lock();
                 waitingFetchCondition.signalAll();//更新完segment之后，通知获取数据
                 waitingFetchLock.unlock();
@@ -90,13 +90,23 @@ public class Sequence {
             log.error("getSegmentFromServer tryCount >= 10, seqName={}, count={}", seqName, count);
             throw new RuntimeException(String.format("getSegmentFromServer tryCount >= 10, seqName=%s, count=%s", seqName, count));
         }
-        try {
-            if (this.usingAddr != null) {
-                String addr = this.usingAddr;//先从指定节点获取
+        List<String> addrList = new ArrayList<>();
+        if (this.usingAddr != null) {//如果已经有正在使用的地址，则放到最前面使用
+            addrList.add(usingAddr);
+        }
+        RandomAddrProvider provider = new RandomAddrProvider(serverAddressList);
+        while (provider.hasMore()) {
+            String provide = provider.provide();
+            if (!addrList.contains(provide)) {
+                addrList.add(provide);
+            }
+        }
+
+        for (String addr : addrList) {
+            try {
                 SeqNextResponse seqNextResponse = postForSeqSegment(addr, count);
                 //       log.info("getSegmentFromServer, seqName={}, count={}, addr={}, seqNextResponse={}", seqName, count, addr, UtilJson.toJson(seqNextResponse));
                 if (EnumSeqNextResponseBodyType.Segment.name().equals(seqNextResponse.getBodyType())) {
-                    this.usingAddr = addr;
                     return getOperatingSeqSegments(addr, seqNextResponse);
                 } else if (EnumSeqNextResponseBodyType.ErrorMsg.name().equals(seqNextResponse.getBodyType())) {
                     log.error("getSegmentFromServer error, seqName={}, count={}, errorMsg={}", seqName, count, seqNextResponse.getMsg());
@@ -110,51 +120,48 @@ public class Sequence {
                     return getSegmentFromServer(count, tryCount + 1);//切换到指定的节点，重新获取
                 } else {
                     String errMsg = String.format("unsupport body type:%s,addr=%s", seqNextResponse.getBodyType(), addr);
-                    throw new RuntimeException(errMsg);
-                }
-            }
-        } catch (Exception e) {
-            if (e instanceof SeqNameNotFoundInDbException) {
-                throw e;
-            }
-            log.error(e.getMessage(), e);
-        }
-
-        RandomAddrProvider provider = new RandomAddrProvider(serverAddressList);
-        while (provider.hasMore()) {
-            String addr = provider.provide();
-            try {
-                SeqNextResponse seqNextResponse = postForSeqSegment(addr, count);
-                //      log.info("getSegmentFromServer, seqName={}, count={}, addr={}, seqNextResponse={}", seqName, count, addr, UtilJson.toJson(seqNextResponse));
-
-                if (EnumSeqNextResponseBodyType.Segment.name().equals(seqNextResponse.getBodyType())) {
-                    this.usingAddr = addr;
-                    return getOperatingSeqSegments(addr, seqNextResponse);
-                } else if (EnumSeqNextResponseBodyType.ErrorMsg.name().equals(seqNextResponse.getBodyType())) {
-                    log.error("getSegmentFromServer error, seqName={}, count={}, errorMsg={}", seqName, count, seqNextResponse.getMsg());
-                    if (seqNextResponse.getErrCode() == EnumErrorCode.SeqNameNotFoundInDbException) {
-                        throw new SeqNameNotFoundInDbException("序列名称不存在");
-                    }
                     this.usingAddr = null;
-                } else if (EnumSeqNextResponseBodyType.NodeAddress.name().equals(seqNextResponse.getBodyType())) {
-                    this.usingAddr = seqNextResponse.getBody().toString();
-                    log.info("switch to addr={}", this.usingAddr);
-                    return getSegmentFromServer(count, tryCount + 1);//切换到指定的节点，重新获取
-                } else {
-                    String errMsg = String.format("unsupport body type:%s,addr=%s", seqNextResponse.getBodyType(), addr);
                     throw new RuntimeException(errMsg);
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
                 if (e instanceof SeqNameNotFoundInDbException) {
                     throw e;
                 }
+                log.error(e.getMessage(), e);
             }
-
-
         }
         throw new RuntimeException("无法连接到客户端");
     }
+
+//    public List<OperatingSeqSegment> abc(String addr, Integer count, Integer tryCount) {
+//        try {
+//            SeqNextResponse seqNextResponse = postForSeqSegment(addr, count);
+//            //      log.info("getSegmentFromServer, seqName={}, count={}, addr={}, seqNextResponse={}", seqName, count, addr, UtilJson.toJson(seqNextResponse));
+//
+//            if (EnumSeqNextResponseBodyType.Segment.name().equals(seqNextResponse.getBodyType())) {
+//                this.usingAddr = addr;
+//                return getOperatingSeqSegments(addr, seqNextResponse);
+//            } else if (EnumSeqNextResponseBodyType.ErrorMsg.name().equals(seqNextResponse.getBodyType())) {
+//                log.error("getSegmentFromServer error, seqName={}, count={}, errorMsg={}", seqName, count, seqNextResponse.getMsg());
+//                if (seqNextResponse.getErrCode() == EnumErrorCode.SeqNameNotFoundInDbException) {
+//                    throw new SeqNameNotFoundInDbException("序列名称不存在");
+//                }
+//                this.usingAddr = null;
+//            } else if (EnumSeqNextResponseBodyType.NodeAddress.name().equals(seqNextResponse.getBodyType())) {
+//                this.usingAddr = seqNextResponse.getBody().toString();
+//                log.info("switch to addr={}", this.usingAddr);
+//                return getSegmentFromServer(count, tryCount + 1);//切换到指定的节点，重新获取
+//            } else {
+//                String errMsg = String.format("unsupport body type:%s,addr=%s", seqNextResponse.getBodyType(), addr);
+//                throw new RuntimeException(errMsg);
+//            }
+//        } catch (Exception e) {
+//            log.error(e.getMessage(), e);
+//            if (e instanceof SeqNameNotFoundInDbException) {
+//                throw e;
+//            }
+//        }
+//    }
 
     @NotNull private List<OperatingSeqSegment> getOperatingSeqSegments(String addr, SeqNextResponse seqNextResponse) {
         Object body = seqNextResponse.getBody();
@@ -183,11 +190,11 @@ public class Sequence {
             }
             int waitingCount = 0;
             while (seqCache.getTotal() < count) {
-                log.info("seqCache.getTotal() < count await,count={}", count);
+                //log.info("seqCache.getTotal() < count await,count={}", count);
                 waitingFetchLock.lock();
                 boolean await = waitingFetchCondition.await(3L, TimeUnit.SECONDS);//对于单节点切换的情况，有可能永远都不会苏醒，这里需要有超时机制
                 waitingFetchLock.unlock();
-                log.info("seqCache.getTotal() < count awake,count={},seqCacheCount={}", count, seqCache.getTotal());
+                //log.info("seqCache.getTotal() < count awake,count={},seqCacheCount={}", count, seqCache.getTotal());
                 if (waitingCount >= 3) {
                     throw new RuntimeException("获取序列失败");
                 }
