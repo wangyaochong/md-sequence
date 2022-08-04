@@ -32,7 +32,7 @@ public class UtilRestTemplate {
     public static <T> T get(String url, Map<String, Object> urlParam, Map<String, String> headerParam, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         for (Map.Entry<String, String> entry : headerParam.entrySet()) {
-            headers.add(entry.getKey(), entry.getValue());
+            headers.set(entry.getKey(), entry.getValue());
         }
         ResponseEntity<T> exchange = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), responseType, urlParam);
         return exchange.getBody();
@@ -50,7 +50,7 @@ public class UtilRestTemplate {
     public static <T> T post(String url, Map<String, Object> urlParam, Map<String, String> headerParam, Object body, Class<T> responseType) {
         HttpHeaders headers = new HttpHeaders();
         for (Map.Entry<String, String> entry : headerParam.entrySet()) {
-            headers.add(entry.getKey(), entry.getValue());
+            headers.set(entry.getKey(), entry.getValue());
         }
         HttpEntity<Object> entity = null;
         if (body == null) {
