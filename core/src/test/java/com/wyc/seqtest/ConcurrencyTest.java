@@ -49,7 +49,7 @@ public class ConcurrencyTest {
         seqCore.setId(1L);
         seqCoreService.save(seqCore);
         SeqInfo seqInfo = new SeqInfo();
-        seqInfo.setClientCacheSize(1);
+        seqInfo.setClientCacheSize(10000);
         seqInfo.setServerCacheSize(1000000);
         seqInfo.setCoreId(1L);
         seqInfo.setName("seq");
@@ -59,7 +59,7 @@ public class ConcurrencyTest {
     }
 
 
-    @Test//1个服务节点1个客户端63w/s，其实主要是网络请求耗时，一秒钟差不多60次网络IO请求
+    @Test//1个服务节点1个客户端63w/s，其实主要是网络请求耗时，一秒钟差不多60次网络IO请求，(这里其实要加上线程调度的时间)
     public void test1Node1Client() {
         ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
         SeqClient seqClient = new SeqClient(Collections.singletonList("127.0.0.1:8081"));
