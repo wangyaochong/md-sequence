@@ -30,6 +30,7 @@ public class SeqClient implements ISeqClient {
         this.serverList = serverList;
     }
 
+
     public Long next(String seqName) {
         Sequence sequence = seqMap.get(seqName);
         if (sequence == null) {
@@ -47,9 +48,21 @@ public class SeqClient implements ISeqClient {
         throw new RuntimeException("no available seq");
     }
 
+    public SeqIterator next(String seqName, Integer count) {
+        Sequence sequence = seqMap.get(seqName);
+        if (sequence == null) {
+            sequence = new Sequence(seqName, serverList, fetchService);
+            seqMap.put(seqName, sequence);
+        }
+
+        PlainSeqSegmentResult next = sequence.next(count);
+        return new SeqIterator(next.getSegmentList());
+    }
+
+
     public static void main(String[] args) {
 //        List<String> serverList1 = Arrays.asList("127.0.0.1:8080", "127.0.0.1:8081");
-        List<String> serverList1 = Arrays.asList( "127.0.0.1:8081");
+        List<String> serverList1 = Arrays.asList("127.0.0.1:8081");
         SeqClient seqClient = new SeqClient(serverList1);
         Long test = seqClient.next("seq");
         for (int i = 0; i < 100; i++) {
@@ -57,8 +70,8 @@ public class SeqClient implements ISeqClient {
         }
 
         long start = System.currentTimeMillis();
-        int count=0;
-        while (System.currentTimeMillis()<start+1000){
+        int count = 0;
+        while (System.currentTimeMillis() < start + 1000) {
             seqClient.next("seq");
             count++;
         }

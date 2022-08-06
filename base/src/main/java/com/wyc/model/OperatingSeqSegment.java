@@ -29,6 +29,11 @@ public class OperatingSeqSegment {//需要进行操作的segment
         return result;
     }
 
+    public OperatingSeqSegment(PlainSeqSegment plainSeqSegment) {
+        this.start = new AtomicLong(plainSeqSegment.getStart());
+        this.end = new AtomicLong(plainSeqSegment.getEnd());
+    }
+
     public PlainSeqSegment toPlainSeqSegment() {
         return new PlainSeqSegment(start.get(), end.get());
     }

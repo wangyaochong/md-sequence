@@ -2,12 +2,14 @@ package com.wyc.seqtest;
 
 import com.wyc.App;
 import com.wyc.SeqClient;
+import com.wyc.SeqIterator;
 import com.wyc.enums.EnumSeqType;
 import com.wyc.generated.entity.SeqCore;
 import com.wyc.generated.entity.SeqInfo;
 import com.wyc.generated.service.INodeService;
 import com.wyc.generated.service.ISeqCoreService;
 import com.wyc.generated.service.ISeqInfoService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,13 +51,34 @@ public class ConcurrencyTest {
         seqCore.setId(1L);
         seqCoreService.save(seqCore);
         SeqInfo seqInfo = new SeqInfo();
-        seqInfo.setClientCacheSize(10000);
-        seqInfo.setServerCacheSize(1000000);
+        //单个客户端的缓存值是1万，一次取一个(一次取100个差不多，cpu计算耗时短)，100秒可以获取6500万个值，平均每秒可以获取65万个值
+        //单个客户端的缓存值是10万，一次取一个(一次取100个差不多，cpu计算耗时短)，100秒可以获取6.3亿个值，平均每秒可以获取630万个值
+        seqInfo.setClientCacheSize(100000000);
+        seqInfo.setServerCacheSize(1000000000);
         seqInfo.setCoreId(1L);
         seqInfo.setName("seq");
         seqInfo.setId(1L);
         seqInfo.setType(EnumSeqType.MultiNodeSequence.name());
         seqInfoService.save(seqInfo);
+    }
+
+
+    @Test//1个服务节点1个客户端63w/s，其实主要是网络请求耗时，一秒钟差不多60次网络IO请求，(这里其实要加上线程调度的时间)
+    public void test1Node1ClientOnce() {
+        ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
+        SeqClient seqClient = new SeqClient(Collections.singletonList("127.0.0.1:8081"));
+        int fetchCount=100000;
+        SeqIterator seq = seqClient.next("seq", fetchCount);
+        int count=0;
+        List<Long> result = new ArrayList<>();
+        while(seq.hasNext()){
+            Long next = seq.next();
+            count++;
+            result.add(next);
+        }
+
+        System.out.println("count:" + count);
+        Assert.assertEquals(result.size(),fetchCount);
     }
 
 
@@ -66,7 +89,7 @@ public class ConcurrencyTest {
         long startTime = System.currentTimeMillis();
         int count = 0;
         while (System.currentTimeMillis() < startTime + runTime) {
-            seqClient.next("seq");
+            seqClient.next("seq",10000);
             count++;
         }
         System.out.println("count:" + count);
