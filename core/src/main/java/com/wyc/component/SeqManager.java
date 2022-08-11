@@ -45,12 +45,13 @@ public class SeqManager implements InitializingBean {
     public boolean startServe(String seqName) {
         startServerLock.lock();
         try {
+            if (servingSequenceMap.containsKey(seqName)) {//如果已经初始化好了
+                return true;
+            }
             Sequence sequence = new Sequence();
             sequence.init(seqName, seqInfoService, nodeService, seqCoreMapper, transactionManager, fetchService);
             servingSequenceMap.put(seqName, sequence);
             return true;
-        } catch (Exception e) {
-            throw e;
         } finally {
             startServerLock.unlock();
         }
