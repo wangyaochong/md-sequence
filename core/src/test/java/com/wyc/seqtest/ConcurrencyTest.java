@@ -53,8 +53,8 @@ public class ConcurrencyTest {
         SeqInfo seqInfo = new SeqInfo();
         //单个客户端的缓存值是1万，一次取一个(一次取100个差不多，cpu计算耗时短)，100秒可以获取6500万个值，平均每秒可以获取65万个值
         //单个客户端的缓存值是10万，一次取一个(一次取100个差不多，cpu计算耗时短)，100秒可以获取6.3亿个值，平均每秒可以获取630万个值
-        seqInfo.setClientCacheSize(100000000);
-        seqInfo.setServerCacheSize(1000000000);
+        seqInfo.setClientCacheSize(10000);
+        seqInfo.setServerCacheSize(1000000);
         seqInfo.setCoreId(1L);
         seqInfo.setName("seq");
         seqInfo.setId(1L);
@@ -89,7 +89,7 @@ public class ConcurrencyTest {
         long startTime = System.currentTimeMillis();
         int count = 0;
         while (System.currentTimeMillis() < startTime + runTime) {
-            seqClient.next("seq",10000);
+            seqClient.next("seq");
             count++;
         }
         System.out.println("count:" + count);

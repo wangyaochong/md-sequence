@@ -1,5 +1,6 @@
 package com.wyc.seqtest;
 
+import ch.qos.logback.classic.Logger;
 import com.wyc.App;
 import com.wyc.SeqClient;
 import com.wyc.enums.EnumSeqType;
@@ -8,6 +9,8 @@ import com.wyc.generated.entity.SeqInfo;
 import com.wyc.generated.service.INodeService;
 import com.wyc.generated.service.ISeqCoreService;
 import com.wyc.generated.service.ISeqInfoService;
+import com.wyc.model.PlainSeqSegmentResult;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +25,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest(classes = App.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
+@Slf4j
 public class SeqServerClientOneNodeSequenceTest {
 
     @Autowired INodeService nodeService;
@@ -44,8 +49,8 @@ public class SeqServerClientOneNodeSequenceTest {
         seqCore.setId(1L);
         seqCoreService.save(seqCore);
         SeqInfo seqInfo = new SeqInfo();
-        seqInfo.setClientCacheSize(100);
-        seqInfo.setServerCacheSize(1000);
+        seqInfo.setClientCacheSize(10000);
+        seqInfo.setServerCacheSize(1000000);
         seqInfo.setCoreId(1L);
         seqInfo.setName("seq");
         seqInfo.setId(1L);
@@ -53,7 +58,23 @@ public class SeqServerClientOneNodeSequenceTest {
         seqInfoService.save(seqInfo);
     }
 
+    @Test
+    public void testOneNode() {
+        ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
+        List<String> serverAddrList = Collections.singletonList("127.0.0.1:8081");
+        SeqClient seqClient = new SeqClient(serverAddrList);
+        long start = System.currentTimeMillis();
+        int count = 0;
+        log.info("start get");
+        while (System.currentTimeMillis() - start < 10000) {
+            Long seq1 = seqClient.next("seq");
+            count++;
+        }
+        log.info("end get, count={}", count);
+    }
+
     /**
+     * w
      * 测试单个客户端进行节点切换
      */
     @Test

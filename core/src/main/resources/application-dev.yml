@@ -2,5 +2,5 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/sequence
+    url: jdbc:mysql://localhost:3306/md_sequence
     username: root
