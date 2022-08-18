@@ -67,18 +67,18 @@ public class ConcurrencyTest {
     public void test1Node1ClientOnce() {
         ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
         SeqClient seqClient = new SeqClient(Collections.singletonList("127.0.0.1:8081"));
-        int fetchCount=100000;
+        int fetchCount = 100000;
         SeqIterator seq = seqClient.next("seq", fetchCount);
-        int count=0;
+        int count = 0;
         List<Long> result = new ArrayList<>();
-        while(seq.hasNext()){
+        while (seq.hasNext()) {
             Long next = seq.next();
             count++;
             result.add(next);
         }
 
         System.out.println("count:" + count);
-        Assert.assertEquals(result.size(),fetchCount);
+        Assert.assertEquals(result.size(), fetchCount);
     }
 
 
@@ -86,13 +86,19 @@ public class ConcurrencyTest {
     public void test1Node1Client() {
         ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
         SeqClient seqClient = new SeqClient(Collections.singletonList("127.0.0.1:8081"));
-        long startTime = System.currentTimeMillis();
         int count = 0;
+        Long seq = seqClient.next("seq");
+        long startTime = System.currentTimeMillis();
+        List<Long> seqList = new ArrayList<>();
         while (System.currentTimeMillis() < startTime + runTime) {
-            seqClient.next("seq");
+            Long value = seqClient.next("seq");
+//            seqList.add(value);
             count++;
         }
         System.out.println("count:" + count);
+//        System.out.println(seqList.size());
+//        System.out.println(seqList);
+
     }
 
 

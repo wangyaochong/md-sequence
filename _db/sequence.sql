@@ -17,8 +17,8 @@ CREATE TABLE seq_info
     `id`                bigint      NOT NULL AUTO_INCREMENT,
     `core_id`           bigint,
     `name`              varchar(64) NOT NULL,
-    `server_cache_size` int         not null default 10000000 comment '服务端缓存，大于等于2，最大20亿，建议100万',
-    `client_cache_size` int         not null default 10000 comment '客户端缓存，大于等于1，最大20亿，建议1万',
+    `server_cache_size` int         not null default 10000000 comment '服务端缓存，大于等于0，最大20亿，建议50万',
+    `client_cache_size` int         not null default 10000 comment '客户端缓存，大于等于0，最大20亿，建议5千',
     `type`              varchar(64) NOT NULL,
     PRIMARY KEY (`id`),
     unique key `name` (`name`)

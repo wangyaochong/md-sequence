@@ -130,7 +130,7 @@ public class Sequence {
     public boolean needFetch(int count) {
         //如果序列缓存小于服务端缓存的一半，则需要拉取缓存
         //需要加上正在拉取的缓存数量，防止过量拉取
-        return seqCache.getTotal() - count + fetchingCount.get() < seqInfo.getServerCacheSize() / 2;
+        return seqCache.getTotal() - count + fetchingCount.get() < seqInfo.getServerCacheSize();
     }
 
     public Consumer<Integer> fetchTask() {
