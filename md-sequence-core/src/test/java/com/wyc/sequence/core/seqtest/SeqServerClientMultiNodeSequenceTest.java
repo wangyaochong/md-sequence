@@ -1,4 +1,4 @@
-package com.wyc.seqtest;
+package com.wyc.sequence.core.seqtest;
 
 import com.wyc.sequence.core.App;
 import com.wyc.sequence.sdk.SeqClient;

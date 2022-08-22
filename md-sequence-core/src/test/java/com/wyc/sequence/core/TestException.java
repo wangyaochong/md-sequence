@@ -1,4 +1,4 @@
-package com.wyc;
+package com.wyc.sequence.core;
 
 import org.junit.Test;
 

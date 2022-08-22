@@ -1,4 +1,4 @@
-package com.wyc;
+package com.wyc.sequence.core;
 
 import com.wyc.sequence.core.App;
 import com.wyc.sequence.core.component.SeqManager;

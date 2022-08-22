@@ -1,4 +1,4 @@
-package com.wyc;
+package com.wyc.sequence.core;
 
 import static org.junit.Assert.assertTrue;
 

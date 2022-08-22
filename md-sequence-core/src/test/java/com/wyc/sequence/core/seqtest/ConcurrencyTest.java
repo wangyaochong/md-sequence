@@ -1,4 +1,4 @@
-package com.wyc.seqtest;
+package com.wyc.sequence.core.seqtest;
 
 import com.wyc.sequence.core.App;
 import com.wyc.sequence.sdk.SeqClient;
@@ -99,10 +99,10 @@ public class ConcurrencyTest {
 
 
     @Test//1个服务器10个客户端800w/s
-    public void test1Node10Client() throws InterruptedException {//单个服务节点单个客户端63w/s
+    public void test1Node3Client() throws InterruptedException {//单个服务节点单个客户端63w/s
         ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
         long startTime = System.currentTimeMillis();
-        int seqClientCount = 10;
+        int seqClientCount = 3;
         final AtomicInteger count = new AtomicInteger(0);
         ExecutorService executorService = Executors.newFixedThreadPool(seqClientCount);
         CountDownLatch countDownLatch = new CountDownLatch(seqClientCount);
@@ -127,12 +127,12 @@ public class ConcurrencyTest {
     }
 
     @Test//3个服务器10个客户端800w/s，因为网络io的时间比较长，所以客户端的数量越多，最终可以获取到的序列就越多
-    public void test3Node10Client() throws InterruptedException {//单个服务节点单个客户端63w/s
+    public void test3Node6Client() throws InterruptedException {//单个服务节点单个客户端63w/s
         ConfigurableApplicationContext run8081 = SpringApplication.run(App.class, "--server.port=8081", "--spring.profiles.active=test");
         ConfigurableApplicationContext run8082 = SpringApplication.run(App.class, "--server.port=8082", "--spring.profiles.active=test");
         ConfigurableApplicationContext run8083 = SpringApplication.run(App.class, "--server.port=8083", "--spring.profiles.active=test");
         long startTime = System.currentTimeMillis();
-        int seqClientCount = 10;
+        int seqClientCount = 6;
         final AtomicInteger count = new AtomicInteger(0);
         ExecutorService executorService = Executors.newFixedThreadPool(seqClientCount);
         CountDownLatch countDownLatch = new CountDownLatch(seqClientCount);
