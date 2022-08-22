@@ -9,10 +9,11 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>core</module>
-        <module>sdk</module>
-        <module>base</module>
-        <module>console</module>
+        <module>md-sequence-base</module>
+        <module>md-sequence-console</module>
+        <module>md-sequence-sdk</module>
+        <module>md-sequence-core</module>
+        <module>md-sequence-test</module>
     </modules>
 
     <name>md-sequence</name>
