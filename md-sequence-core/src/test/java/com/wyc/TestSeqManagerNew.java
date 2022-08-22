@@ -1,8 +1,9 @@
 package com.wyc;
 
-import com.wyc.component.SeqManager;
-import com.wyc.model.PlainSeqSegmentResult;
-import com.wyc.util.UtilJson;
+import com.wyc.sequence.core.App;
+import com.wyc.sequence.core.component.SeqManager;
+import com.wyc.sequence.base.model.PlainSeqSegmentResult;
+import com.wyc.sequence.base.util.UtilJson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

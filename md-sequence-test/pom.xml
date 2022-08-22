@@ -27,6 +27,14 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.wyc</groupId>
+            <artifactId>md-sequence-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wyc</groupId>
+            <artifactId>md-sequence-core</artifactId>
+        </dependency>
     </dependencies>
 
 

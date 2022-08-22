@@ -2,6 +2,7 @@ package com.wyc;
 
 import static org.junit.Assert.assertTrue;
 
+import com.wyc.sequence.sdk.SeqClient;
 import org.junit.Test;
 
 import java.util.ArrayList;

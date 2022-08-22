@@ -1,5 +1,6 @@
 package com.wyc;
 
+import com.wyc.sequence.sdk.SeqClient;
 import org.junit.Test;
 
 import java.util.ArrayList;

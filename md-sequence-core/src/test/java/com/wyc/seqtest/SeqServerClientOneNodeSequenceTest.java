@@ -1,15 +1,13 @@
 package com.wyc.seqtest;
 
-import ch.qos.logback.classic.Logger;
-import com.wyc.App;
-import com.wyc.SeqClient;
-import com.wyc.enums.EnumSeqType;
-import com.wyc.generated.entity.SeqCore;
-import com.wyc.generated.entity.SeqInfo;
-import com.wyc.generated.service.INodeService;
-import com.wyc.generated.service.ISeqCoreService;
-import com.wyc.generated.service.ISeqInfoService;
-import com.wyc.model.PlainSeqSegmentResult;
+import com.wyc.sequence.core.App;
+import com.wyc.sequence.sdk.SeqClient;
+import com.wyc.sequence.base.enums.EnumSeqType;
+import com.wyc.sequence.core.generated.entity.SeqCore;
+import com.wyc.sequence.core.generated.entity.SeqInfo;
+import com.wyc.sequence.core.generated.service.INodeService;
+import com.wyc.sequence.core.generated.service.ISeqCoreService;
+import com.wyc.sequence.core.generated.service.ISeqInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;

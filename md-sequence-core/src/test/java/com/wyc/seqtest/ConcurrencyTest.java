@@ -1,14 +1,14 @@
 package com.wyc.seqtest;
 
-import com.wyc.App;
-import com.wyc.SeqClient;
-import com.wyc.SeqIterator;
-import com.wyc.enums.EnumSeqType;
-import com.wyc.generated.entity.SeqCore;
-import com.wyc.generated.entity.SeqInfo;
-import com.wyc.generated.service.INodeService;
-import com.wyc.generated.service.ISeqCoreService;
-import com.wyc.generated.service.ISeqInfoService;
+import com.wyc.sequence.core.App;
+import com.wyc.sequence.sdk.SeqClient;
+import com.wyc.sequence.sdk.SeqIterator;
+import com.wyc.sequence.base.enums.EnumSeqType;
+import com.wyc.sequence.core.generated.entity.SeqCore;
+import com.wyc.sequence.core.generated.entity.SeqInfo;
+import com.wyc.sequence.core.generated.service.INodeService;
+import com.wyc.sequence.core.generated.service.ISeqCoreService;
+import com.wyc.sequence.core.generated.service.ISeqInfoService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,13 +92,9 @@ public class ConcurrencyTest {
         List<Long> seqList = new ArrayList<>();
         while (System.currentTimeMillis() < startTime + runTime) {
             Long value = seqClient.next("seq");
-//            seqList.add(value);
             count++;
         }
         System.out.println("count:" + count);
-//        System.out.println(seqList.size());
-//        System.out.println(seqList);
-
     }
 
 
